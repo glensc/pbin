@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Pastes input from stdin to Stikked pastebin
+# Pastes from STDIN or file from commandline argument to Stikked pastebin
 # Default server: paste.mate-desktop.org
-# URL: https://github.com/glensc/gpaste
+# URL: https://github.com/glensc/pbpast
 
 # Copyright (C) 2014 Elan Ruusamäe
 

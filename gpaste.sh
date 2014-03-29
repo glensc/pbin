@@ -59,6 +59,14 @@ mime_to_lang() {
 	EOF
 }
 
+# detect filetype. outputs nothing if no file binary or no detected
+detect_mimetype() {
+	local file="$1" out
+
+	out=$(file -L --mime-type "$file" 2>/dev/null || :)
+	echo "${out#*: }"
+}
+
 usage() {
 	echo "Usage: $PROGRAM [options] < [input_file]
 
@@ -121,20 +129,12 @@ process_commandline() {
 			break
 		;;
 		*)
-			echo 2>&1 "$PROGRAM: Internal error: [$1] not recognized!"
+			echo >&2 "$PROGRAM: Internal error: [$1] not recognized!"
 			exit 1
 		;;
 		esac
 		shift
 	done
-}
-
-# detect filetype. outputs nothing if no file binary or no detected
-detect_mimetype() {
-	local file="$1" out
-
-	out=$(file -L --mime-type "$file" 2>/dev/null || :)
-	echo "${out#*: }"
 }
 
 set_defaults

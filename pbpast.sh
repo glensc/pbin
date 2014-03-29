@@ -54,8 +54,17 @@ mime_to_lang() {
 	local mime="$1"
 
 	awk -F ':' -vm="$mime" 'm==$1 {print $2}' <<-EOF
-	text/x-shellscript:bash
+	application/javascript:javascript
+	application/xml:xml
+	text/html:html5
+	text/x-c:c
+	text/x-c++:cpp
+	text/x-diff:diff
+	text/x-lua:lua
 	text/x-php:php
+	text/x-python:python
+	text/x-ruby:ruby
+	text/x-shellscript:bash
 	EOF
 }
 

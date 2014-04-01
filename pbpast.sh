@@ -149,6 +149,8 @@ process_commandline() {
 set_defaults
 process_commandline "$@"
 
+echo "Paste endpoint: $PASTE_URL"
+
 # if we have more commandline arguments, set these as title
 if [ "${title+set}" != "set" ]; then
 	title="$*"

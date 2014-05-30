@@ -1,5 +1,5 @@
-pbpast
-======
+pbin
+====
 
 CLI tool for [Stikked][1] based pastebin services, like http://paste.mate-desktop.org/
 

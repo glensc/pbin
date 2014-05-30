@@ -2,7 +2,7 @@
 
 # Pastes from STDIN or file from commandline argument to Stikked pastebin
 # Default server: paste.mate-desktop.org
-# URL: https://github.com/glensc/pbpast
+# URL: https://github.com/glensc/pbin
 
 # Copyright (C) 2014 Elan Ruusamäe
 

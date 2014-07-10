@@ -5,6 +5,20 @@ CLI tool for [Stikked][1] based pastebin services, like http://paste.mate-deskto
 
 Inspired by [mpaste][2] from [mate-desktop][3], but I did not want to have Python dependency and wanted to add more features (file type detection).
 
+## Installing
+
+Just copy [pbin.sh](https://raw.githubusercontent.com/glensc/pbin/master/pbin.sh) to somewhere in your `$PATH`:
+
+```
+URL=https://raw.githubusercontent.com/glensc/pbin/master/pbin.sh
+PBIN=~/.local/bin/pbin
+
+wget $URL -O $PBIN || \
+curl $URL $PBIN
+
+chmod +x $PBIN
+```
+
 ## Copyright
 
 License: GPL v2

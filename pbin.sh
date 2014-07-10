@@ -103,7 +103,7 @@ set_defaults() {
 set_defaults
 
 # parse command line args
-t=$(getopt -o h,t:,n:,p,l:,e:,r: --long help,title:,name:,private,language:,expire:,reply: -n "$PROGRAM" -- "$@")
+t=$(getopt -o h,t:,n:,p,l:,e:,r:,b: --long help,title:,name:,private,language:,expire:,reply: -n "$PROGRAM" -- "$@")
 eval set -- "$t"
 
 while :; do
@@ -134,6 +134,10 @@ while :; do
 	-r|--reply)
 		shift
 		reply="$1"
+	;;
+	-b)
+		shift
+		PASTE_URL="$1"
 	;;
 	--)
 		shift

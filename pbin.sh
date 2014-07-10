@@ -100,54 +100,52 @@ set_defaults() {
 	name=${SUDO_USER:-$USER}@${HOSTNAME:-$(hostname)}
 }
 
-process_commandline() {
-	local t
-
-	# parse command line args
-	t=$(getopt -o h,t:,n:,p,l:,e:,r: --long help,title:,name:,private,language:,expire:,reply: -n "$PROGRAM" -- "$@")
-	eval set -- "$t"
-
-	while :; do
-		case "$1" in
-		-h|--help)
-			usage
-			exit 0
-		;;
-		-t|--title)
-			shift
-			title="$1"
-		;;
-		-n|--name)
-			shift
-			name="$1"
-		;;
-		-p|--private)
-			private=1
-		;;
-		-l|--language)
-			language="$1"
-		;;
-		-e|--expire)
-			expire="$1"
-		;;
-		-r|--reply)
-			reply="$1"
-		;;
-		--)
-			shift
-			break
-		;;
-		*)
-			echo >&2 "$PROGRAM: Internal error: [$1] not recognized!"
-			exit 1
-		;;
-		esac
-		shift
-	done
-}
-
 set_defaults
-process_commandline "$@"
+
+# parse command line args
+t=$(getopt -o h,t:,n:,p,l:,e:,r: --long help,title:,name:,private,language:,expire:,reply: -n "$PROGRAM" -- "$@")
+eval set -- "$t"
+
+while :; do
+	case "$1" in
+	-h|--help)
+		usage
+		exit 0
+	;;
+	-t|--title)
+		shift
+		title="$1"
+	;;
+	-n|--name)
+		shift
+		name="$1"
+	;;
+	-p|--private)
+		private=1
+	;;
+	-l|--language)
+		shift
+		language="$1"
+	;;
+	-e|--expire)
+		shift
+		expire="$1"
+	;;
+	-r|--reply)
+		shift
+		reply="$1"
+	;;
+	--)
+		shift
+		break
+	;;
+	*)
+		echo >&2 "$PROGRAM: Internal error: [$1] not recognized!"
+		exit 1
+	;;
+	esac
+	shift
+done
 
 echo "Paste endpoint: $PASTE_URL"
 

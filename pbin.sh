@@ -31,6 +31,7 @@ PROGRAM=${0##*/}
 pastebin() {
 	# show params
 	sed -e '/^$/d' >&2 <<-EOF
+		${PASTE_APIKEY+apikey: "$PASTE_APIKEY"}
 		${title+title: "$title"}
 		${name+name: "$name"}
 		${private+private: "$private"}

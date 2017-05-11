@@ -23,6 +23,17 @@
 set -e
 PROGRAM=${0##*/}
 
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  AWKPROG=awk
+  GOPTPROG=getopt
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  AWKPROG=gawk
+  GOPTPROG=/usr/local/Cellar/gnu-getopt/*/bin/getopt
+else
+  echo "DARWIN/LINUX-GNU only supported."
+  exit 1
+fi
+
 # can be overriden from env
 : ${PASTE_URL='http://paste.mate-desktop.org/api/create'}
 
@@ -53,7 +64,7 @@ pastebin() {
 mime_to_lang() {
 	local mime="$1"
 
-	awk -F ':' -vm="$mime" 'm==$1 {print $2}' <<-EOF
+	$AWKPROG -F ':' -vm="$mime" 'm==$1 {print $2}' <<-EOF
 	application/javascript:javascript
 	application/xml:xml
 	text/html:html5
@@ -103,7 +114,7 @@ set_defaults() {
 set_defaults
 
 # parse command line args
-t=$(getopt -o h,t:,n:,p,l:,e:,r:,b: --long help,title:,name:,private,language:,expire:,reply: -n "$PROGRAM" -- "$@")
+t=$($GOPTPROG -o h,t:,n:,p,l:,e:,r:,b: --long help,title:,name:,private,language:,expire:,reply: -n "$PROGRAM" -- "$@")
 eval set -- "$t"
 
 while :; do

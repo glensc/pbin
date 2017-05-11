@@ -25,11 +25,13 @@ PROGRAM=${0##*/}
 
 # can be overriden from env
 : ${PASTE_URL='http://paste.mate-desktop.org/api/create'}
+#: ${PASTE_APIKEY='apikey'}
 
 # paste. take input from stdin
 pastebin() {
 	# show params
 	sed -e '/^$/d' >&2 <<-EOF
+		${PASTE_APIKEY+apikey: "$PASTE_APIKEY"}
 		${title+title: "$title"}
 		${name+name: "$name"}
 		${private+private: "$private"}
@@ -39,7 +41,7 @@ pastebin() {
 	EOF
 
 	# do paste
-	curl "$PASTE_URL" \
+	curl "$PASTE_URL${PASTE_APIKEY+?apikey=${PASTE_APIKEY}}" \
 		${title+-F title="$title"} \
 		${name+-F name="$name"} \
 		${private+-F private="$private"} \
@@ -80,6 +82,7 @@ usage() {
 	echo "Usage: $PROGRAM [options] < [input_file]
 
 Options:
+  -a, --apikey    API key for the server
   -t, --title     title of this paste
   -n, --name      author of this paste
   -p, --private   should this paste be private
@@ -103,7 +106,7 @@ set_defaults() {
 set_defaults
 
 # parse command line args
-t=$(getopt -o h,t:,n:,p,l:,e:,r:,b: --long help,title:,name:,private,language:,expire:,reply: -n "$PROGRAM" -- "$@")
+t=$(getopt -o h,t:,n:,p,l:,e:,r:,b:,a: --long help,title:,name:,private,language:,expire:,reply:,apikey: -n "$PROGRAM" -- "$@")
 eval set -- "$t"
 
 while :; do
@@ -138,6 +141,10 @@ while :; do
 	-b)
 		shift
 		PASTE_URL="$1"
+	;;
+	-a|--apikey)
+		shift
+		PASTE_APIKEY="$1"
 	;;
 	--)
 		shift

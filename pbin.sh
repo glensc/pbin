@@ -4,7 +4,7 @@
 # Default server: paste.mate-desktop.org
 # URL: https://github.com/glensc/pbin
 
-# Copyright (C) 2014 Elan Ruusamäe
+# Copyright (C) 2014-2018 Elan Ruusamäe
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -26,6 +26,13 @@ PROGRAM=${0##*/}
 # can be overriden from env
 : ${PASTE_URL='http://paste.mate-desktop.org/api/create'}
 #: ${PASTE_APIKEY='apikey'}
+
+# filter url for printing (remove password)
+print_url() {
+	local url="$1"
+
+	echo "$url" | sed -e 's;://[^@]*@;://;'
+}
 
 # paste. take input from stdin
 pastebin() {
@@ -158,7 +165,7 @@ while :; do
 	shift
 done
 
-echo "Paste endpoint: $PASTE_URL"
+printf "Paste endpoint: %s\n" "$(print_url "$PASTE_URL")"
 
 # if we have more commandline arguments, set these as title
 if [ "${title+set}" != "set" ]; then

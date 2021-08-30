@@ -22,10 +22,14 @@
 
 set -e
 PROGRAM=${0##*/}
+verbose=""
+result=""
 
-# can be overriden from env
-: ${PASTE_URL='http://paste.mate-desktop.org/api/create'}
-#: ${PASTE_APIKEY='apikey'}
+if [ -z "$PASTE_URL" ];then
+    # can be overriden from env
+    : ${PASTE_URL='http://paste.mate-desktop.org/api/create'}
+    #: ${PASTE_APIKEY='apikey'}
+fi
 
 # filter url for printing (remove password)
 print_url() {
@@ -36,6 +40,8 @@ print_url() {
 
 # paste. take input from stdin
 pastebin() {
+    
+if [ ! -z $verbose ];then    
 	# show params
 	sed -e '/^$/d' >&2 <<-EOF
 		${PASTE_APIKEY+apikey: "$PASTE_APIKEY"}
@@ -56,6 +62,18 @@ pastebin() {
 		${expire+-F expire="$expire"} \
 		${reply+-F reply="$reply"} \
 		-F 'text=<-'
+else
+	# do paste
+	curl -s "$PASTE_URL${PASTE_APIKEY+?apikey=${PASTE_APIKEY}}" \
+		${title+-F title="$title"} \
+		${name+-F name="$name"} \
+		${private+-F private="$private"} \
+		${language+-F lang="$language"} \
+		${expire+-F expire="$expire"} \
+		${reply+-F reply="$reply"} \
+		-F 'text=<-'
+fi
+
 }
 
 # try to resolve mime-type to language
@@ -89,6 +107,7 @@ usage() {
 	echo "Usage: $PROGRAM [options] < [input_file]
 
 Options:
+  -v, --verbose   Verbose mode; does not use xsel or xclip
   -a, --apikey    API key for the server
   -t, --title     title of this paste
   -n, --name      author of this paste
@@ -113,11 +132,15 @@ set_defaults() {
 set_defaults
 
 # parse command line args
-t=$(getopt -o h,t:,n:,p,l:,e:,r:,b:,a: --long help,title:,name:,private,language:,expire:,reply:,apikey: -n "$PROGRAM" -- "$@")
+t=$(getopt -o h,v,t:,n:,p,l:,e:,r:,b:,a: --long help,verbose,title:,name:,private,language:,expire:,reply:,apikey: -n "$PROGRAM" -- "$@")
 eval set -- "$t"
 
 while :; do
 	case "$1" in
+	-v|--verbose)
+        verbose=1
+
+	;;
 	-h|--help)
 		usage
 		exit 0
@@ -165,7 +188,9 @@ while :; do
 	shift
 done
 
-printf "Paste endpoint: %s\n" "$(print_url "$PASTE_URL")"
+if [ ! -z $verbose ];then
+    printf "Paste endpoint: %s\n" "$(print_url "$PASTE_URL")"
+fi
 
 # if we have more commandline arguments, set these as title
 if [ "${title+set}" != "set" ]; then
@@ -188,4 +213,20 @@ else
 	paste=$(cat)
 fi
 
-printf "%s" "$paste" | pastebin
+
+if [ -z $verbose ];then
+    result=$(printf "%s" "$paste" | pastebin )
+    xclip_bin=$(which xclip)
+    xsel_bin=$(which xsel)
+    if [ -f ${xclip_bin} ];then 
+        echo "${result}" | xclip -i
+    fi
+    if [ -f ${xsel_bin} ];then 
+        echo "${result}" | xsel -i -b
+    fi
+    echo "${result}" 
+else
+    printf "%s" "$paste" | pastebin 
+fi
+
+
